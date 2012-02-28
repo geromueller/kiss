@@ -2,17 +2,28 @@
 #define KISS_IO_H_
 
 #include <iostream>
+#include <stdint.h>
 
 namespace kiss {
 
 class Output {
+protected:
+	bool failed;
 public:
+	Output() :
+			failed(false) {
+
+	}
 	virtual ~Output() {
 	}
 	virtual bool writeBytes(const char *data, size_t size) = 0;
+
+	operator bool() {
+		return (!failed);
+	}
 };
 
-class StreamOutput {
+class StreamOutput: public Output {
 	std::ostream &output;
 public:
 	StreamOutput(std::ostream &output) :
@@ -20,8 +31,9 @@ public:
 
 	}
 
-	bool writeBytes(char *data, size_t size) {
+	bool writeBytes(const char *data, size_t size) {
 		output.write(data, size);
+		failed = output.fail();
 		return (output);
 	}
 
@@ -81,13 +93,19 @@ inline void write(Output &out, const std::vector<VALUE> &m) {
 }
 
 class Input {
+protected:
+	bool failed;
 public:
 	virtual ~Input() {
 	}
 	virtual bool readBytes(char *data, size_t size) = 0;
+
+	operator bool() {
+		return (!failed);
+	}
 };
 
-class StreamInput {
+class StreamInput: public Input {
 	std::istream &input;
 public:
 	StreamInput(std::istream &input) :
@@ -97,6 +115,7 @@ public:
 
 	bool readBytes(char *data, size_t size) {
 		input.read(data, size);
+		failed = input.fail();
 		return (input);
 	}
 
@@ -126,10 +145,10 @@ inline bool read(Input &in, std::map<KEY, VALUE> &m) {
 	size_t count = read<uint64_t>(in);
 	for (size_t i = 0; i < count; i++) {
 		KEY key;
-		if(!read(in, key))
+		if (!read(in, key))
 			return false;
 		VALUE &v = m[key];
-		if(!read(in, v))
+		if (!read(in, v))
 			return false;
 	}
 	return true;
