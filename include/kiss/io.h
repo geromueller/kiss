@@ -39,12 +39,12 @@ public:
 	}
 
 	bool writeBytes(char *data, size_t size) {
-		data_left = size;
-		while (data_left) {
-
-			output.write(data, size);
-		}
-		return (output);
+//		data_left = size;
+//		while (data_left) {
+//
+//			output.write(data, size);
+//		}
+//		return (output);
 	}
 };
 
@@ -117,8 +117,8 @@ inline T read(Input &in) {
 
 inline bool read(Input &in, std::string &s) {
 	s.resize(read<size_t>(in));
-	in.readBytes((char *) &s[0], s.size());
-	return (in);
+	bool result = in.readBytes((char *) &s[0], s.size());
+	return result;
 }
 
 template<class KEY, class VALUE>
@@ -126,11 +126,13 @@ inline bool read(Input &in, std::map<KEY, VALUE> &m) {
 	size_t count = read<uint64_t>(in);
 	for (size_t i = 0; i < count; i++) {
 		KEY key;
-		read(in, key);
+		if(!read(in, key))
+			return false;
 		VALUE &v = m[key];
-		read(in, v);
+		if(!read(in, v))
+			return false;
 	}
-	return (in);
+	return true;
 }
 
 template<class VALUE>
