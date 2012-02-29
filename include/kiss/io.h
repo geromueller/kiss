@@ -2,6 +2,9 @@
 #define KISS_IO_H_
 
 #include <iostream>
+#include <vector>
+#include <map>
+
 #include <stdint.h>
 
 namespace kiss {
