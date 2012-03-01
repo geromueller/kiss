@@ -33,7 +33,7 @@ public:
 	bool operator <(const uuid& op) const;
 
 	/// Returns a string representation of the ID.
-	std::string str() const;
+	//std::string str() const;
 	void print(char *p) const;
 
 	static uuid parse(const char *id);

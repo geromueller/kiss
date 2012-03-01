@@ -16,7 +16,7 @@ TEST(UUID, creation) {
 TEST(UUID, uniqueness) {
 	uuid reference = uuid::create();
 
-	for (size_t i = 0; i < 1000000; i++) {
+	for (size_t i = 0; i < 100000000; i++) {
 		uuid probe = uuid::create();
 		EXPECT_NE(reference, probe);
 	}
